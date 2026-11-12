@@ -1005,7 +1005,7 @@ V.config=()=>{
  <div class="card pad rise" style="display:grid;gap:16px"><h3>System</h3>
   <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><b>Allow negative stock</b><br><small>Only Admin can turn this on. Off by default.</small></div><button class="switch ${S.settings.allowNegative?'on':''}" data-act="toggleNeg" aria-label="Allow negative stock" ${isAdmin()?'':'disabled'}></button></div>
   <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><div><b>Urdu menu (preview)</b><br><small>System is Urdu-ready. Menu labels switch now; full screens in full version.</small></div><button class="switch ${S.settings.urdu?'on':''}" data-act="toggleUrdu" aria-label="Urdu menu"></button></div>
-  <div><b>Backup &amp; restore</b><br><small>Copy all data to keep a backup, then paste it back here to restore.</small><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn" data-act="backup">${ic('copy')}Copy backup</button><button class="btn" data-act="restore">Restore</button><button class="btn danger" data-act="resetDemo">Reset demo data</button></div></div></div></div>`);
+  <div><b>Backup &amp; restore</b><br><small>Copy all data to keep a backup, then paste it back here to restore.</small><div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn" data-act="backup">${ic('copy')}Copy backup</button><button class="btn" data-act="restore">Restore</button><button class="btn danger" data-act="resetDemo">Reset all data</button></div></div></div></div>`);
 };
 
 /* ================= render & nav ================= */
@@ -1261,7 +1261,7 @@ const ACT={
  toggleUrdu:()=>{S.settings.urdu=!S.settings.urdu;save();render()},
  backup:async()=>{try{await navigator.clipboard.writeText(JSON.stringify(S));toast('Backup copied. Paste it in a safe file.')}catch(e){toast('Copy blocked by the browser')}},
  restore:()=>openModal({title:'Restore backup',save:'Restore',body:fld('Paste backup text',`<textarea id="rsT" rows="6"></textarea>`),onSave(){const o=JSON.parse(val('rsT'));if(!o.materials)throw new Error('This is not a Zarvia ERP backup.');S=o;S.seedDate=TODAY;toast('Backup restored')}}),
- resetDemo:()=>openModal({title:'Reset to sample data?',body:'<p>All entries you made will be removed and the sample data restored.</p>',save:'Reset',onSave(){const u=S.user;seed();S.user=u;toast('Sample data restored')}}),
+ resetDemo:()=>openModal({title:'Reset all data?',body:'<p>All entries you made will be removed and the system returns to its opening balances.</p>',save:'Reset',onSave(){const u=S.user;seed();S.user=u;toast('Data reset')}}),
  copyCSV:async()=>{const t=document.querySelector('.rep .doc table');if(!t)return;const csv=[...t.rows].map(r=>[...r.cells].map(c=>'"'+c.innerText.replace(/"/g,'""')+'"').join('\t')).join('\n');try{await navigator.clipboard.writeText(csv);toast('Copied. Paste into Excel.')}catch(e){toast('Copy blocked by the browser')}}
 };
 document.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(!a)return;if(a.disabled)return;const f=ACT[a.dataset.act];if(f){e.preventDefault();f(a.dataset.arg,a,e)}});
